@@ -18,9 +18,8 @@ async function renderMovieData() {
     try {
         let urlShowtimes = 'https://api.amctheatres.com/v2/theatres/2110/showtimes?page-number=1&page-size=100';
         const headers = { "X-AMC-Vendor-Key": apiKey };
-        const movieShowtimes = {};
+        let movieShowtimes = {};
 
-        // Fetch movie showtimes data
         while (urlShowtimes) {
             const data = await fetchMovieData(urlShowtimes, headers);
             if (data.errors) {
@@ -43,22 +42,26 @@ async function renderMovieData() {
             }
         }
 
-        // Inside the loop where you fetch and process movie data
-        for (let movie in movieShowtimes) {
-            let [abs_movie_time, movie_id] = movieShowtimes[movie];
+        var movieShowtimesList = Object.keys(movieShowtimes).map(function(key) {
+            return [key, movieShowtimes[key][0], movieShowtimes[key][1]];
+        });
+
+        movieShowtimesList.sort(function(first, second) {
+            return first[1] - second[1];
+        });
+
+        for (var i = 0; i < movieShowtimesList.length; i++) {
+            let [movie, abs_movie_time, movie_id] = movieShowtimesList[i];
             let url_movie = `https://api.amctheatres.com/v2/movies/${movie_id}`;
             let response = await fetch(proxyUrl + encodeURIComponent(url_movie), { headers });
             let movieData = await response.json();
             let score = movieData['score'];
             let earliest_showtime = new Date(movieData["earliestShowingUtc"]);
 
-            // Create a new table row
             let row = document.createElement('tr');
             
-            // Populate table cells with movie information
             row.innerHTML = `<td>${movie}</td><td>${abs_movie_time}</td>`;
             
-            // Append the row to the table body
             document.getElementById('movieList').appendChild(row);
         }
 

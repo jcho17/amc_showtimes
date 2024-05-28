@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "node --experimental-modules wtf_2.js"
+    "start": "node showtimes.js"
   },
   "dependencies": {
     "express": "^4.19.2",
