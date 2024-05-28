@@ -1,4 +1,4 @@
-const proxyUrl = 'http://localhost:3000/proxy?url=';
+const proxyUrl = 'https://amcshowtimes-f9650fda1239.herokuapp.com/proxy?url=';
 const apiKey = '95A776EF-F8DD-429E-B5F7-44988915688D';
 
 async function fetchMovieData(url, headers) {
