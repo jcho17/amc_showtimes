@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "start": "node --experimental-modules wtf_2.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "isomorphic-fetch": "^3.0.0",
+    "node-fetch": "^3.3.2"
+  }
+}
