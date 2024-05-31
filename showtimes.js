@@ -37,7 +37,7 @@ async function renderMovieData() {
                 const movieId = showtime['movieId'];
                 const absMovieTime = new Date(showtime['showDateTimeLocal']);
                 if (!(movie in movieShowtimes) || movieShowtimes[movie][0] < absMovieTime) {
-                    movieShowtimes[movie] = [absMovieTime, movieId];
+                    movieShowtimes[movie] = [absMovieTime, showtime['showDateTimeLocal'], movieId];
                 }
             }
         }
@@ -51,18 +51,12 @@ async function renderMovieData() {
         });
 
         for (var i = 0; i < movieShowtimesList.length; i++) {
-            let [movie, abs_movie_time, movie_id] = movieShowtimesList[i];
-            let url_movie = `https://api.amctheatres.com/v2/movies/${movie_id}`;
-            let response = await fetch(proxyUrl + encodeURIComponent(url_movie), { headers });
-            let movieData = await response.json();
-            let score = movieData['score'];
-            let earliest_showtime = new Date(movieData["earliestShowingUtc"]);
-
-            let row = document.createElement('tr');
+            let [movie, abs_movie_time, local_movie_time, movie_id] = movieShowtimesList[i];
+            let table = document.getElementById('movieList')
+            let row = table.insertRow(i)
+            let time_arr = local_movie_time.split('T')
+            row.innerHTML = `<td>${movie}</td><td>${time_arr[1]} | ${time_arr[0]}</td>`;
             
-            row.innerHTML = `<td>${movie}</td><td>${abs_movie_time}</td>`;
-            
-            document.getElementById('movieList').appendChild(row);
         }
 
     } catch (error) {
