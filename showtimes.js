@@ -14,9 +14,9 @@ function createMovieInfoElement(movie, absMovieTime, score) {
     return movieInfo;
 }
 
-async function renderMovieData() {
+async function renderMovieData(theatre_id, theatre_name) {
     try {
-        let urlShowtimes = 'https://api.amctheatres.com/v2/theatres/2110/showtimes?page-number=1&page-size=100';
+        let urlShowtimes = `https://api.amctheatres.com/v2/theatres/${theatre_id}/showtimes?page-number=1&page-size=100`;
         const headers = { "X-AMC-Vendor-Key": apiKey };
         let movieShowtimes = {};
 
@@ -49,10 +49,12 @@ async function renderMovieData() {
         movieShowtimesList.sort(function(first, second) {
             return first[1] - second[1];
         });
-
+        let header = document.getElementById("theatre_header")
+        header.innerHTML = `< ${theatre_name} >`
+        let table = document.getElementById('movieList')
+        table.innerHTML=''
         for (var i = 0; i < movieShowtimesList.length; i++) {
             let [movie, abs_movie_time, local_movie_time, movie_id] = movieShowtimesList[i];
-            let table = document.getElementById('movieList')
             let row = table.insertRow(i)
             let time_arr = local_movie_time.split('T')
             row.innerHTML = `<td>${movie}</td><td>${time_arr[1]} | ${time_arr[0]}</td>`;
@@ -64,4 +66,29 @@ async function renderMovieData() {
     }
 }
 
-renderMovieData().catch(error => console.error('Unhandled promise rejection:', error));
+theatre_list = [2110, 2112, 2195]
+theatre_index = 0 //default to village 7
+theatre_id_to_name = {
+    2110 : "Village 7",
+    2112 : "Union Square 6",
+    2195 : "Kips Bay 15",
+
+}
+
+async function changeTheatre(direction) {
+  theatre_index = (theatre_list.length + direction + theatre_index) % theatre_list.length
+  let header = document.getElementById("theatre_header")
+        header.innerHTML = `< ${theatre_id_to_name[theatre_list[theatre_index]]} >`
+}
+
+
+
+
+
+
+
+
+
+document.getElementById("hitit").addEventListener("click", function(){renderMovieData(theatre_list[theatre_index], theatre_id_to_name[theatre_list[theatre_index]])});
+document.getElementById("rocker-right").addEventListener("click", function(){changeTheatre(1)});
+document.getElementById("rocker-left").addEventListener("click", function(){changeTheatre(-1)});

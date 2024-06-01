@@ -1,38 +1,332 @@
 <!DOCTYPE html>
 <html lang="en">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,200..900;1,200..900&family=VT323&display=swap" rel="stylesheet">   
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AMC Village 7 Showtimes</title>
     <style>
+        @keyframes flicker {
+            0% {
+                opacity: 0.27861;
+            }
+            5% {
+                opacity: 0.34769;
+            }
+            10% {
+                opacity: 0.23604;
+            }
+            15% {
+                opacity: 0.90626;
+            }
+            20% {
+                opacity: 0.18128;
+            }
+            25% {
+                opacity: 0.83891;
+            }
+            30% {
+                opacity: 0.65583;
+            }
+            35% {
+                opacity: 0.67807;
+            }
+            40% {
+                opacity: 0.26559;
+            }
+            45% {
+                opacity: 0.84693;
+            }
+            50% {
+                opacity: 0.96019;
+            }
+            55% {
+                opacity: 0.08594;
+            }
+            60% {
+                opacity: 0.20313;
+            }
+            65% {
+                opacity: 0.71988;
+            }
+            70% {
+                opacity: 0.53455;
+            }
+            75% {
+                opacity: 0.37288;
+            }
+            80% {
+                opacity: 0.71428;
+            }
+            85% {
+                opacity: 0.70419;
+            }
+            90% {
+                opacity: 0.7003;
+            }
+            95% {
+                opacity: 0.36108;
+            }
+            100% {
+                opacity: 0.24387;
+            }
+        }
+        
+        #display::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 2%;
+            left: 2%;
+            bottom: 2%;
+            right: 2%;
+            background: rgba(18, 16, 16, 0.1);
+            opacity: 0;
+            z-index: 2;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+        #display::before {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 2%;
+            left: 2%;
+            bottom: 2%;
+            right: 2%;
+            background: linear-gradient(rgba(6, 92, 17, 0.15) 0.2%, rgba(48, 93, 5, 0.15) 3%), linear-gradient(90deg, rgba(0, 110, 255, 0.15), rgba(255, 145, 0, 0.15), rgba(0, 0, 255, 0.15));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        #display{
+            animation: textShadow 1.6s infinite;
+            position: relative;
+            width: 80%;
+            height: 60%;
+            display: inline-block;
+            padding: 50px;
+            top: 4.7%;
+            background-color: white;
+            border-radius: 7%;
+            pointer-events: none; 
+        }
+        
+        #bezel{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            border-radius: 7%;
+            z-index: 3;
+            
+        }
+
+        #tv {
+            width: 800px;
+            height: 950px;
+            text-align: center;
+            font-family: "VT323", monospace;
+            font-weight: 450;
+            font-style: normal;
+            font-optical-sizing: auto;
+            background-color: #313131;
+            z-index: 1;
+            margin: auto;
+            border-radius: 3%;
+        }
+
+        #tv {
+            border-style: solid;
+            border-width: 10px;
+            border-color:#aaa9ad;
+        }
+
+        #control-box{
+            width: 90%;
+            height: 10%;
+            border-style: solid;
+            border-width: 6px;
+            border-color:#aaa9ad;
+            top: 7%;
+            margin: auto;
+            position: relative;
+            border-radius: 5%;
+        }
+
+        #logo{
+            position: absolute;
+            width: 20%;
+            height: 55%;
+            top: 21%;
+            left: 3%;
+            z-index: 4;
+            
+        }
+
+        #screen{
+            position: absolute;
+            top:4.8%;
+            bottom:0;
+            width: 90%;
+            overflow-y:auto;
+            z-index: 9;
+            pointer-events: auto; 
+        }
+        
+
         table {
             width: 100%;
+            height: 100%;
             border-collapse: collapse;
+            border-style: hidden; 
         }
         th, td {
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
+            z-index: 5;
+            border-collapse: collapse;
+            border-style: hidden;
         }
-        th {
-            background-color: #f2f2f2;
+        tr{
+            border-collapse: collapse;
+            border-style: hidden;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+            font-size: .9em;
         }
+
+        #scan-box {
+            position: absolute;
+            height: 100%;
+            width: 97%;
+            top: 5%;
+            left: 2%;
+        }
+
+        #scan {
+            height: 20px;
+            width: 100%;
+            background-color: #dddddd;
+            animation: scan 3s infinite;
+            left: 3%;
+        }
+
+        @keyframes scan {
+            0% {
+                transform: translateY(0%);
+            }
+            100% {
+                transform: translateY(3000%);
+                opacity: 0;
+            }
+        }
+
+        .btn {
+            display: inline-block;
+            color: #FCFBE7;
+            font-size: 2em;
+            text-align: center;
+            text-decoration: none;
+            position: absolute;
+            text-transform: capitalize;
+            
+            }
+
+        #hitit {
+            top: 27%;
+            right: 5%;
+            width: 15%;
+            height: 50%;
+            background-color: #C4273C;
+            border-bottom: 4px solid #851A29;
+            text-shadow: 1px 2px rgba(133,26,41,.8);
+            z-index: 7;
+            border-radius: 30px;
+            }
+
+        #rocker-right, #rocker-left {
+            top: 32%;
+            width: 8%;
+            height: 37%;
+            background-color: #419b58;
+            border-bottom: 4px solid #129e35;
+            text-shadow: 1px 2px #06681e;
+            z-index: 7;      
+            border-radius: 25px;
+            }
+
+        #rocker-right {
+            right: 22%;
+        }
+
+        #rocker-left {
+            right: 30.7%;
+        }
+
+        .btn:hover {
+            margin-top: 2px;
+            border-bottom: 2px solid #851A29;
+            }
+
+        .btn:active {
+            margin-top: 4px;
+            border: none;
+            box-shadow: none;
+            }
+        
+        .grate {
+            width: 90%;
+            height: 1.5%;
+            background-color: rgb(158, 158, 158); 
+            border-radius: 50%;
+            position: relative;
+            left: 4.3%;
+            bottom: -8%;
+            margin: .6%;
+        }
+
     </style>
 </head>
 <body>
-    <h1>Showtime Tracker</h1>
-    <table id="movieTable">
-        <thead>
-            <tr>
-                <th>Movie</th>
-                <th>Last Showtime</th>
-            </tr>
-        </thead>
-        <tbody id="movieList"></tbody>
-    </table>
+    <div id = "tv">
+        <div id = "display-wrapper"></div>
+        <div id = "display">
+            <img src="assets/bezel.png" id="bezel">
+            <div id="scan-box">
+                <div id= "scan"></div>
+            </div>
+            <div id="screen">
+                <h1 id="theatre_header">< Village 7 ></h1>
+                <table id="movieTable">
+                    <thead>
+                        <tr>
+                            <th>Movie</th>
+                            <th>Last Showtime</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movieList"></tbody>
+                </table>
+            </div>
+        </div>
+        <div id = "control-box">
+            <img id = "logo" src="assets/amc.png">
+            <div class="wrapper">
+                <button type = button class="btn" id ="hitit""></button>
+                <button type = button class="btn" id ="rocker-right"></button>
+                <button type = button class="btn" id ="rocker-left"></button>
+              </div>
+        </div>
+        <div class = "grate" id = "grate 1"></div>
+        <div class = "grate" id = "grate 2"></div>
+        <div class = "grate" id = "grate 3"></div>
+        <div class = "grate" id = "grate 4"></div>
+    </div>
 
     <script src="showtimes.js"></script>
 </body>
