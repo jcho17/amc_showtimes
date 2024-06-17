@@ -67,6 +67,8 @@ async function renderMovieData(theatre_id, theatre_name) {
 }
 
 theatre_list = [2110, 2112, 2195]
+
+theatre_id_to_showtimes_cache = {}
 theatre_index = 0 //default to village 7
 theatre_id_to_name = {
     2110 : "Village 7",
@@ -75,10 +77,24 @@ theatre_id_to_name = {
 
 }
 
-async function changeTheatre(direction) {
+async function changeTheatre(direction) { 
+  curr_theatre_id = theatre_list[theatre_index]
+  // setting cache (only if cache has not been set and page has been generated)
+  if (!(curr_theatre_id in theatre_id_to_showtimes_cache) & document.getElementById('movieList').innerHTML != ``){
+    theatre_id_to_showtimes_cache[curr_theatre_id] = document.getElementById('movieList').innerHTML
+  }
   theatre_index = (theatre_list.length + direction + theatre_index) % theatre_list.length
+  new_theatre_id = theatre_list[theatre_index]
+  console.log(theatre_id_to_showtimes_cache)
+  // getting cache if available
+  if (new_theatre_id in theatre_id_to_showtimes_cache){
+    alert("in cache")
+    document.getElementById('movieList').innerHTML = theatre_id_to_showtimes_cache[new_theatre_id]
+  } else {
+    document.getElementById('movieList').innerHTML=''
+  }
   let header = document.getElementById("theatre_header")
-        header.innerHTML = `< ${theatre_id_to_name[theatre_list[theatre_index]]} >`
+        header.innerHTML = `< ${theatre_id_to_name[new_theatre_id]} >`
 }
 
 
