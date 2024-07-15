@@ -88,7 +88,6 @@ async function changeTheatre(direction) {
   console.log(theatre_id_to_showtimes_cache)
   // getting cache if available
   if (new_theatre_id in theatre_id_to_showtimes_cache){
-    alert("in cache")
     document.getElementById('movieList').innerHTML = theatre_id_to_showtimes_cache[new_theatre_id]
   } else {
     document.getElementById('movieList').innerHTML=''
