@@ -43,7 +43,7 @@ async function renderMovieData(theatre_id, theatre_name) {
         }
 
         var movieShowtimesList = Object.keys(movieShowtimes).map(function(key) {
-            return [key, movieShowtimes[key][0], movieShowtimes[key][1]];
+            return [key, movieShowtimes[key][0], movieShowtimes[key][1], movieShowtimes[key][2]];
         });
 
         movieShowtimesList.sort(function(first, second) {
@@ -55,9 +55,21 @@ async function renderMovieData(theatre_id, theatre_name) {
         table.innerHTML=''
         for (var i = 0; i < movieShowtimesList.length; i++) {
             let [movie, abs_movie_time, local_movie_time, movie_id] = movieShowtimesList[i];
+            let earliest_showtime_url = `https://api.amctheatres.com/v2/movies/${movie_id}/`;
+            let data = await fetchMovieData(earliest_showtime_url, headers)
             let row = table.insertRow(i)
             let time_arr = local_movie_time.split('T')
-            row.innerHTML = `<td>${movie}</td><td>${time_arr[1]} | ${time_arr[0]}</td>`;
+            release_date = data["releaseDateUtc"]
+            release_date.replace("T", " ");
+            release_date.replace(/-/g,'/');
+            let run_length_in_ms = new Date() - new Date(release_date)
+            let run_length_in_days = Math.floor(run_length_in_ms/ 8.64e+7)
+            if (run_length_in_days < 0){
+                run_length_in_days = "Unreleased"
+            } else {
+                run_length_in_days = run_length_in_days.toString() + " days";
+            }
+            row.innerHTML = `<td>${movie}</td><td>${time_arr[1]} | ${time_arr[0]}</td><td>${run_length_in_days}</td>`;
             
         }
 
