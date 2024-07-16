@@ -14,6 +14,22 @@ function createMovieInfoElement(movie, absMovieTime, score) {
     return movieInfo;
 }
 
+async function getMovieCurrentRun(movie_id, headers) {
+    let earliest_showtime_url = `https://api.amctheatres.com/v2/movies/${movie_id}/`;
+    let data = await fetchMovieData(earliest_showtime_url, headers)
+    release_date = data["releaseDateUtc"]
+    release_date.replace("T", " ");
+    release_date.replace(/-/g,'/');
+    let run_length_in_ms = new Date() - new Date(release_date)
+    let run_length_in_days = Math.floor(run_length_in_ms/ 8.64e+7)
+    if (run_length_in_days < 0){
+        run_length_in_days = "Unreleased"
+    } else {
+        run_length_in_days = run_length_in_days.toString() + " days";
+    }
+    return run_length_in_days
+}
+
 async function renderMovieData(theatre_id, theatre_name) {
     try {
         let urlShowtimes = `https://api.amctheatres.com/v2/theatres/${theatre_id}/showtimes?page-number=1&page-size=100`;
@@ -36,14 +52,17 @@ async function renderMovieData(theatre_id, theatre_name) {
                 const movie = showtime['movieName'];
                 const movieId = showtime['movieId'];
                 const absMovieTime = new Date(showtime['showDateTimeLocal']);
-                if (!(movie in movieShowtimes) || movieShowtimes[movie][0] < absMovieTime) {
-                    movieShowtimes[movie] = [absMovieTime, showtime['showDateTimeLocal'], movieId];
+                if (!(movie in movieShowtimes)) {
+                    run_length_in_days = await getMovieCurrentRun(movieId, headers);
+                    movieShowtimes[movie] = [absMovieTime, showtime['showDateTimeLocal'], run_length_in_days];
+                } else if (movieShowtimes[movie][0] < absMovieTime) {
+                    movieShowtimes[movie] = [absMovieTime, showtime['showDateTimeLocal'], movieShowtimes[movie][2]];
                 }
             }
         }
 
         var movieShowtimesList = Object.keys(movieShowtimes).map(function(key) {
-            return [key, movieShowtimes[key][0], movieShowtimes[key][1], movieShowtimes[key][2]];
+            return [key, movieShowtimes[key][0], movieShowtimes[key][1],  movieShowtimes[key][2]];
         });
 
         movieShowtimesList.sort(function(first, second) {
@@ -54,21 +73,12 @@ async function renderMovieData(theatre_id, theatre_name) {
         let table = document.getElementById('movieList')
         table.innerHTML=''
         for (var i = 0; i < movieShowtimesList.length; i++) {
-            let [movie, abs_movie_time, local_movie_time, movie_id] = movieShowtimesList[i];
-            let earliest_showtime_url = `https://api.amctheatres.com/v2/movies/${movie_id}/`;
-            let data = await fetchMovieData(earliest_showtime_url, headers)
-            let row = table.insertRow(i)
+
+        }
+        for (var i = 0; i < movieShowtimesList.length; i++) {
+            let [movie, abs_movie_time, local_movie_time, run_length_in_days] = movieShowtimesList[i];
             let time_arr = local_movie_time.split('T')
-            release_date = data["releaseDateUtc"]
-            release_date.replace("T", " ");
-            release_date.replace(/-/g,'/');
-            let run_length_in_ms = new Date() - new Date(release_date)
-            let run_length_in_days = Math.floor(run_length_in_ms/ 8.64e+7)
-            if (run_length_in_days < 0){
-                run_length_in_days = "Unreleased"
-            } else {
-                run_length_in_days = run_length_in_days.toString() + " days";
-            }
+            let row = table.insertRow(i)
             row.innerHTML = `<td>${movie}</td><td>${time_arr[1]} | ${time_arr[0]}</td><td>${run_length_in_days}</td>`;
             
         }
